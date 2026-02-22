@@ -6,9 +6,13 @@ i have database course that why i will use this server
 2. then the password of my Linux account i wrote
 3. Open PostgreSQL 
 psql -d postgres
+
 4.create table from sample data 
+
 5.for Run migration i use \i migration.sql 
+
 6.run rollback i use \i rollback.sql
+
 7.for view data i use SELECT * FROM ACTIVITIES;
 
 So I created two SQL files on the server
