@@ -1,5 +1,5 @@
 BEGIN;
-
+-- make old table 
 CREATE TABLE ACTIVITIES_OLD (
     STUDENT_ID INT,
     ACTIVITY VARCHAR(25),
