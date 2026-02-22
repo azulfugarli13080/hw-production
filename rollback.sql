@@ -11,14 +11,14 @@ ALTER COLUMN FIRSTNAME TYPE VARCHAR(20);
 ALTER TABLE STUDENTS
 ALTER COLUMN LASTNAME TYPE VARCHAR(20);
 
--- Create old table structure (use consistent name)
+-- Create old table structure 
 CREATE TABLE OLD_ACTIVITIES (
     STUDENT_ID INT,
     ACTIVITY VARCHAR(25),
     LEVEL VARCHAR(10)
 );
 
--- Convert arrays back into rows (skip NULLs and maintain order)
+-- Convert  back into rows 
 INSERT INTO OLD_ACTIVITIES (STUDENT_ID, ACTIVITY, LEVEL)
 SELECT 
     STUDENT_ID,
