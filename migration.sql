@@ -1,8 +1,8 @@
 BEGIN;
-
+-- first i rename column id
 ALTER TABLE STUDENTS
 RENAME COLUMN ID TO STUDENT_ID;
-
+-- Increase name column lenghts 
 ALTER TABLE STUDENTS
 ALTER COLUMN FIRSTNAME TYPE VARCHAR(40);
 
