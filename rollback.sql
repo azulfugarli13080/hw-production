@@ -24,7 +24,7 @@ RENAME TO ACTIVITIES;
 ALTER TABLE STUDENTS
 RENAME COLUMN STUDENT_ID TO ID;
 
--- restore original column sizes
+-- then we need to restore original column sizes
 ALTER TABLE STUDENTS
 ALTER COLUMN FIRSTNAME TYPE VARCHAR(20);
 
@@ -33,3 +33,6 @@ ALTER COLUMN LASTNAME TYPE VARCHAR(20);
 
 -- finish rollback 
 COMMIT;
+
+-- check result 
+SELECT * FROM ACTIVITIES;
