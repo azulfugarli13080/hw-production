@@ -1,3 +1,31 @@
+CREATE TABLE STUDENTS (
+    ID INT,
+    FIRSTNAME VARCHAR(20),
+    LASTNAME VARCHAR(20)
+);
+
+CREATE TABLE ACTIVITIES (
+    STUDENT_ID INT,
+    ACTIVITY VARCHAR(25),
+    LEVEL VARCHAR(10)
+);
+
+INSERT INTO STUDENTS VALUES
+(1, 'James', 'Reyes'),
+(2, 'Tiffany', 'Wolf'),
+(3, 'David', 'Palmer');
+
+INSERT INTO ACTIVITIES VALUES
+(1, 'Tennis', 'Advanced'),
+(1, 'Literature', 'Beginner'),
+(1, 'Tennis', 'Advanced'),
+(2, 'Football', 'Beginner'),
+(3, 'Music', 'Advanced'),
+(3, 'Chess', 'Beginner'),
+(2, 'Tennis', 'Beginner'),
+(1, 'Chemistry', 'Beginner'),
+(3, 'Music', 'Advanced');
+
 BEGIN;
 
 -- First rename column id
