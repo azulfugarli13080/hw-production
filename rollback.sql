@@ -12,3 +12,16 @@ SELECT
     UNNEST(ACTIVITIES),
     UNNEST(LEVELS)
 FROM ACTIVITIES; 
+
+-- remove our new structure 
+DROP TABLE ACTIVITIES;
+
+-- then i  rename table back to original name 
+ALTER TABLE OLD_ACTIVITIES
+RENAME TO ACTIVITIES;
+
+-- rename again column back
+ALTER TABLE STUDENTS
+RENAME COLUMN STUDENT_ID TO ID;
+
+-- restore original column sizes
