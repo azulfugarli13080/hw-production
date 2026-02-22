@@ -1,43 +1,38 @@
 BEGIN;
+-- make old table 
+CREATE TABLE ACTIVITIES_OLD (
+    STUDENT_ID INT,
+    ACTIVITY VARCHAR(25),
+    LEVEL VARCHAR(10)
+);
+-- convert  into rows
+INSERT INTO OLD_ACTIVITIES (STUDENT_ID, ACTIVITY, LEVEL)
+SELECT 
+    STUDENT_ID,
+    UNNEST(ACTIVITIES),
+    UNNEST(LEVELS)
+FROM ACTIVITIES; 
 
--- First rename column back to ID
+-- remove our new structure 
+DROP TABLE ACTIVITIES;
+
+-- then i  rename table back to original name 
+ALTER TABLE OLD_ACTIVITIES
+RENAME TO ACTIVITIES;
+
+-- rename again column back
 ALTER TABLE STUDENTS
 RENAME COLUMN STUDENT_ID TO ID;
 
--- Restore original column sizes
+-- then we need to restore original column sizes
 ALTER TABLE STUDENTS
 ALTER COLUMN FIRSTNAME TYPE VARCHAR(20);
 
 ALTER TABLE STUDENTS
 ALTER COLUMN LASTNAME TYPE VARCHAR(20);
 
--- Create old table structure 
-CREATE TABLE OLD_ACTIVITIES (
-    STUDENT_ID INT,
-    ACTIVITY VARCHAR(25),
-    LEVEL VARCHAR(10)
-);
-
--- Convert  back into rows 
-INSERT INTO OLD_ACTIVITIES (STUDENT_ID, ACTIVITY, LEVEL)
-SELECT 
-    STUDENT_ID,
-    UNNEST(ACTIVITIES),
-    UNNEST(LEVELS)
-FROM ACTIVITIES
-WHERE ACTIVITIES IS NOT NULL 
-  AND LEVELS IS NOT NULL
-ORDER BY STUDENT_ID, ACTIVITY;
-
--- Remove our new structure
-DROP TABLE ACTIVITIES;
-
--- Rename table back to original name
-ALTER TABLE OLD_ACTIVITIES
-RENAME TO ACTIVITIES;
-
--- finish rollback
+-- finish rollback 
 COMMIT;
 
--- Check result 
-SELECT * FROM ACTIVITIES ORDER BY STUDENT_ID, ACTIVITY;
+-- check result 
+SELECT * FROM ACTIVITIES;
