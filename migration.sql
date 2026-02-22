@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS ACTIVITIES;
+DROP TABLE IF EXISTS STUDENTS;
+-- i need to create my original table 
 CREATE TABLE STUDENTS (
     ID INT,
     FIRSTNAME VARCHAR(20),
@@ -27,55 +30,63 @@ INSERT INTO ACTIVITIES VALUES
 (3, 'Music', 'Advanced');
 
 BEGIN;
--- first i rename column id
+
+-- first rename column id
 ALTER TABLE STUDENTS
 RENAME COLUMN ID TO STUDENT_ID;
--- then increase name column lenghts 
+
+-- then increase name column lengths 
 ALTER TABLE STUDENTS
 ALTER COLUMN FIRSTNAME TYPE VARCHAR(40);
 
 ALTER TABLE STUDENTS
 ALTER COLUMN LASTNAME TYPE VARCHAR(40);
 
--- i create new table for the new structure
+-- create new table with primary key 
 CREATE TABLE NEW_ACTIVITIES (
-    STUDENT_ID INT,
+    STUDENT_ID INT PRIMARY KEY,
     ACTIVITIES TEXT[],
     LEVELS TEXT[]
 );
 
--- insert cleaned activities and remove duplicates , and also NULL values
+-- insert cleaned activities and remove duplicates, NULL, empty, 
 INSERT INTO NEW_ACTIVITIES (STUDENT_ID, ACTIVITIES, LEVELS)
 SELECT 
     s.STUDENT_ID,
-    ARRAY_AGG(s.ACTIVITY),
-    ARRAY_AGG(s.LEVEL)
+    ARRAY_AGG(s.ACTIVITY ORDER BY s.ACTIVITY),
+    ARRAY_AGG(s.LEVEL ORDER BY s.ACTIVITY)
 FROM (
-    SELECT DISTINCT STUDENT_ID, ACTIVITY, LEVEL
+    SELECT DISTINCT 
+        STUDENT_ID, 
+        TRIM(ACTIVITY) as ACTIVITY, 
+        TRIM(LEVEL) as LEVEL
     FROM ACTIVITIES
     WHERE ACTIVITY IS NOT NULL 
       AND LEVEL IS NOT NULL
+      AND TRIM(ACTIVITY) != ''
+      AND TRIM(LEVEL) != ''
 ) s
 GROUP BY s.STUDENT_ID;
 
--- insert students who don’t have any activities
+-- insert students with no activities and with using NULL 
 INSERT INTO NEW_ACTIVITIES (STUDENT_ID, ACTIVITIES, LEVELS)
-SELECT STUDENT_ID, ARRAY[]::TEXT[], ARRAY[]::TEXT[]
+SELECT STUDENT_ID, NULL, NULL
 FROM STUDENTS
 WHERE STUDENT_ID NOT IN (
-    SELECT STUDENT_ID FROM NEW_ACTIVITIES
+    SELECT STUDENT_ID FROM NEW_ACTIVITIES WHERE STUDENT_ID IS NOT NULL
 );
 
--- Replace old activities table with new 
+-- replace old activities table with new one
 DROP TABLE ACTIVITIES;
 
 ALTER TABLE NEW_ACTIVITIES
 RENAME TO ACTIVITIES; 
 
--- to finish our migration 
+-- finish migration 
 COMMIT;
 
 -- check result 
-SELECT * FROM ACTIVITIES;
+SELECT * FROM ACTIVITIES ORDER BY STUDENT_ID;
+
 
 
