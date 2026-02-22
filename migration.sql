@@ -46,3 +46,6 @@ RENAME TO ACTIVITIES;
 
 -- to finish our migration 
 COMMIT;
+
+-- check result 
+SELECT * FROM ACTIVITIES;
