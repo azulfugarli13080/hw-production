@@ -27,62 +27,55 @@ INSERT INTO ACTIVITIES VALUES
 (3, 'Music', 'Advanced');
 
 BEGIN;
-
--- First rename column id
+-- first i rename column id
 ALTER TABLE STUDENTS
 RENAME COLUMN ID TO STUDENT_ID;
-
--- Then increase name column lengths 
+-- then increase name column lenghts 
 ALTER TABLE STUDENTS
 ALTER COLUMN FIRSTNAME TYPE VARCHAR(40);
 
 ALTER TABLE STUDENTS
 ALTER COLUMN LASTNAME TYPE VARCHAR(40);
 
--- Create new table with PRIMARY KEY
+-- i create new table for the new structure
 CREATE TABLE NEW_ACTIVITIES (
-    STUDENT_ID INT PRIMARY KEY,
+    STUDENT_ID INT,
     ACTIVITIES TEXT[],
     LEVELS TEXT[]
 );
 
--- Insert cleaned activities and remove duplicates, NULL, empty, 
+-- insert cleaned activities and remove duplicates , and also NULL values
 INSERT INTO NEW_ACTIVITIES (STUDENT_ID, ACTIVITIES, LEVELS)
 SELECT 
     s.STUDENT_ID,
-    ARRAY_AGG(s.ACTIVITY ORDER BY s.ACTIVITY),
-    ARRAY_AGG(s.LEVEL ORDER BY s.ACTIVITY)
+    ARRAY_AGG(s.ACTIVITY),
+    ARRAY_AGG(s.LEVEL)
 FROM (
-    SELECT DISTINCT 
-        STUDENT_ID, 
-        TRIM(ACTIVITY) as ACTIVITY, 
-        TRIM(LEVEL) as LEVEL
+    SELECT DISTINCT STUDENT_ID, ACTIVITY, LEVEL
     FROM ACTIVITIES
     WHERE ACTIVITY IS NOT NULL 
       AND LEVEL IS NOT NULL
-      AND TRIM(ACTIVITY) != ''
-      AND TRIM(LEVEL) != ''
 ) s
 GROUP BY s.STUDENT_ID;
 
--- Insert students with no activities with using NULL 
+-- insert students who don’t have any activities
 INSERT INTO NEW_ACTIVITIES (STUDENT_ID, ACTIVITIES, LEVELS)
-SELECT STUDENT_ID, NULL, NULL
+SELECT STUDENT_ID, ARRAY[]::TEXT[], ARRAY[]::TEXT[]
 FROM STUDENTS
 WHERE STUDENT_ID NOT IN (
-    SELECT STUDENT_ID FROM NEW_ACTIVITIES WHERE STUDENT_ID IS NOT NULL
+    SELECT STUDENT_ID FROM NEW_ACTIVITIES
 );
 
--- Replace old activities table with new one
+-- Replace old activities table with new 
 DROP TABLE ACTIVITIES;
 
 ALTER TABLE NEW_ACTIVITIES
 RENAME TO ACTIVITIES; 
 
--- finish migration 
+-- to finish our migration 
 COMMIT;
 
--- Check result 
-SELECT * FROM ACTIVITIES ORDER BY STUDENT_ID;
+-- check result 
+SELECT * FROM ACTIVITIES;
 
 
